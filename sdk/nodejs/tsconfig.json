@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "outDir": "bin",
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "declaration": true,
+        "sourceMap": true
+    },
+    "files": [
+        "aRecord.ts",
+        "adminGroup.ts",
+        "adminRole.ts",
+        "adminUser.ts",
+        "cNameRecord.ts",
+        "config/index.ts",
+        "config/vars.ts",
+        "dHCPRange.ts",
+        "dNSView.ts",
+        "index.ts",
+        "mXRecord.ts",
+        "nSGroupDelegation.ts",
+        "nSGroupForward.ts",
+        "nSGroupForwardStub.ts",
+        "nSGroupStub.ts",
+        "nSRecord.ts",
+        "network.ts",
+        "permission.ts",
+        "provider.ts",
+        "sRVRecord.ts",
+        "tXTRecord.ts",
+        "utilities.ts",
+        "zoneAuth.ts",
+        "zoneDelegated.ts",
+        "zoneForward.ts",
+        "zoneStub.ts"
+    ]
+}
+

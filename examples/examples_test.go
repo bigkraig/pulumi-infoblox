@@ -5,6 +5,8 @@ package examples
 import (
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -19,10 +21,10 @@ func TestExamples(t *testing.T) {
 	// if region == "" {
 	// 	t.Skipf("Skipping test due to missing AWS_REGION environment variable")
 	// }
-	// cwd, err := os.Getwd()
-	// if !assert.NoError(t, err, "expected a valid working directory: %v", err) {
-	// 	return
-	// }
+	cwd, err := os.Getwd()
+	if !assert.NoError(t, err, "expected a valid working directory: %v", err) {
+		return
+	}
 
 	// base options shared amongst all tests.
 	base := integration.ProgramTestOptions{
@@ -39,20 +41,20 @@ func TestExamples(t *testing.T) {
 
 	examples := []integration.ProgramTestOptions{
 		// List each test
-		// baseJS.With(integration.ProgramTestOptions{
-		// 	Dir: path.Join(cwd, "api"),
-		// 	ExtraRuntimeValidation: validateAPITest(func(body string) {
-		// 		assert.Equal(t, "Hello, world!", body)
-		// 	}),
-		// 	EditDirs: []integration.EditDir{{
-		// 		Dir:      "./api/step2",
-		// 		Additive: true,
-		// 		ExtraRuntimeValidation: validateAPITest(func(body string) {
-		// 			assert.Equal(t, "<h1>Hello world!</h1>", body)
-		// 		}),
-		// 	}},
-		// 	ExpectRefreshChanges: true,
-		// }),
+		baseJS.With(integration.ProgramTestOptions{
+			Dir: path.Join(cwd, "api"),
+			ExtraRuntimeValidation: validateAPITest(func(body string) {
+				assert.Equal(t, "Hello, world!", body)
+			}),
+			EditDirs: []integration.EditDir{{
+				Dir:      "./api/step2",
+				Additive: true,
+				ExtraRuntimeValidation: validateAPITest(func(body string) {
+					assert.Equal(t, "<h1>Hello world!</h1>", body)
+				}),
+			}},
+			ExpectRefreshChanges: true,
+		}),
 	}
 
 	if !testing.Short() {

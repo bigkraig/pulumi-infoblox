@@ -15,13 +15,13 @@
 package main
 
 import (
-	"github.com/pulumi/pulumi-terraform/pkg/tfbridge"
+	"github.com/pulumi/pulumi-terraform/pkg/tfgen"
 
-	xyz "github.com/pulumi/pulumi-xyz"
-	"github.com/pulumi/pulumi-xyz/pkg/version"
+	infoblox "github.com/pulumi/pulumi-infoblox"
+	"github.com/pulumi/pulumi-infoblox/pkg/version"
 )
 
 func main() {
 	// Modify the path to point to the new provider
-	tfbridge.Main("xyz", version.Version, xyz.Provider())
+	tfgen.Main("infoblox", version.Version, infoblox.Provider())
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package xyz
+package infoblox
 
 import (
 	"unicode"
@@ -22,13 +22,13 @@ import (
 	"github.com/pulumi/pulumi-terraform/pkg/tfbridge"
 	"github.com/pulumi/pulumi/pkg/resource"
 	"github.com/pulumi/pulumi/pkg/tokens"
-	"github.com/terraform-providers/terraform-provider-xyz/xyz"
+	"github.com/sky-uk/terraform-provider-infoblox/infoblox"
 )
 
 // all of the token components used below.
 const (
 	// packages:
-	mainPkg = "xyz"
+	mainPkg = "infoblox"
 	// modules:
 	mainMod = "index" // the y module
 )
@@ -46,10 +46,10 @@ func makeType(mod string, typ string) tokens.Type {
 // makeDataSource manufactures a standard resource token given a module and resource name.  It
 // automatically uses the main package and names the file by simply lower casing the data source's
 // first character.
-func makeDataSource(mod string, res string) tokens.ModuleMember {
-	fn := string(unicode.ToLower(rune(res[0]))) + res[1:]
-	return makeMember(mod+"/"+fn, res)
-}
+// func makeDataSource(mod string, res string) tokens.ModuleMember {
+// 	fn := string(unicode.ToLower(rune(res[0]))) + res[1:]
+// 	return makeMember(mod+"/"+fn, res)
+// }
 
 // makeResource manufactures a standard resource token given a module and resource name.  It
 // automatically uses the main package and names the file by simply lower casing the resource's
@@ -60,18 +60,18 @@ func makeResource(mod string, res string) tokens.Type {
 }
 
 // boolRef returns a reference to the bool argument.
-func boolRef(b bool) *bool {
-	return &b
-}
+// func boolRef(b bool) *bool {
+// 	return &b
+// }
 
 // stringValue gets a string value from a property map if present, else ""
-func stringValue(vars resource.PropertyMap, prop resource.PropertyKey) string {
-	val, ok := vars[prop]
-	if ok && val.IsString() {
-		return val.StringValue()
-	}
-	return ""
-}
+// func stringValue(vars resource.PropertyMap, prop resource.PropertyKey) string {
+// 	val, ok := vars[prop]
+// 	if ok && val.IsString() {
+// 		return val.StringValue()
+// 	}
+// 	return ""
+// }
 
 // preConfigureCallback is called before the providerConfigure function of the underlying provider.
 // It should validate that the provider can be configured, and provide actionable errors in the case
@@ -82,46 +82,133 @@ func preConfigureCallback(vars resource.PropertyMap, c *terraform.ResourceConfig
 }
 
 // managedByPulumi is a default used for some managed resources, in the absence of something more meaningful.
-var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
+// var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
 
 // Provider returns additional overlaid schema and metadata associated with the provider..
 func Provider() tfbridge.ProviderInfo {
 	// Instantiate the Terraform provider
-	p := xyz.Provider().(*schema.Provider)
+	p := infoblox.Provider().(*schema.Provider)
 
 	// Create a Pulumi provider mapping
 	prov := tfbridge.ProviderInfo{
 		P:           p,
-		Name:        "xyz",
-		Description: "A Pulumi package for creating and managing xyz cloud resources.",
-		Keywords:    []string{"pulumi", "xyz"},
+		Name:        "infoblox",
+		Description: "A Pulumi package for creating and managing infoblox resources.",
+		Keywords:    []string{"pulumi", "infoblox"},
 		License:     "Apache-2.0",
 		Homepage:    "https://pulumi.io",
-		Repository:  "https://github.com/pulumi/pulumi-xyz",
-		Config:      map[string]*tfbridge.SchemaInfo{
-			// Add any required configuration here, or remove the example below if
-			// no additional points are required.
-			// "region": {
-			// 	Type: makeType("region", "Region"),
-			// 	Default: &tfbridge.DefaultInfo{
-			// 		EnvVars: []string{"AWS_REGION", "AWS_DEFAULT_REGION"},
-			// 	},
+		Repository:  "https://github.com/pulumi/pulumi-infoblox",
+		GitHubOrg:   "sky-uk",
+		Config: map[string]*tfbridge.SchemaInfo{
+
+			"username": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_USERNAME"},
+				},
+			},
+			// "username": &schema.Schema{
+			// 	Type:        schema.TypeString,
+			// 	Required:    true,
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_USERNAME", nil),
+			// 	Description: "User to authenticate with Infoblox appliance",
+			// },
+
+			"password": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_PASSWORD"},
+				},
+			},
+			// "password": &schema.Schema{
+			// 	Type:        schema.TypeString,
+			// 	Required:    true,
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_PASSWORD", nil),
+			// 	Description: "Password to authenticate with Infoblox appliance",
+			// },
+
+			"server": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_SERVER"},
+				},
+			},
+			// "server": &schema.Schema{
+			// 	Type:        schema.TypeString,
+			// 	Required:    true,
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_SERVER", nil),
+			// 	Description: "Infoblox appliance to connect to eg https://192.168.0.1",
+			// },
+
+			"allow_unverified_ssl": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_ALLOW_UNVERIFIED_SSL"},
+				},
+			},
+			// "allow_unverified_ssl": &schema.Schema{
+			// 	Type:        schema.TypeBool,
+			// 	Optional:    true,
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_ALLOW_UNVERIFIED_SSL", false),
+			// 	Description: "If set, Infoblox client will permit unverifiable SSL certificates.",
+			// },
+
+			"wapi_version": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_WAPI_VERSION"},
+				},
+			},
+			// "wapi_version": &schema.Schema{
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// 	Description: "Infoblox WAPI server version, defaults to v2.6.1",
+			// 	Default:     "v2.6.1",
+			// },
+
+			"timeout": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_CLIENT_TIMEOUT"},
+				},
+			},
+			// "timeout": &schema.Schema{
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// 	Description: "http response timeout, in seconds",
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_CLIENT_TIMEOUT", 0),
+			// },
+
+			"client_debug": {
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"INFOBLOX_CLIENT_DEBUG"},
+				},
+			},
+			// "client_debug": &schema.Schema{
+			// 	Type:        schema.TypeBool,
+			// 	Optional:    true,
+			// 	DefaultFunc: schema.EnvDefaultFunc("INFOBLOX_CLIENT_DEBUG", false),
+			// 	Description: "infoblox client debug",
 			// },
 		},
 		PreConfigureCallback: preConfigureCallback,
-		Resources:            map[string]*tfbridge.ResourceInfo{
-			// Map each resource in the Terraform provider to a Pulumi type. Two examples
-			// are below - the single line form is the common case. The multi-line form is
-			// needed only if you wish to override types or other default options.
-			//
-			// "aws_iam_role": {Tok: makeResource(mainMod, "IamRole")}
-			//
-			// "aws_acm_certificate": {
-			// 	Tok: makeResource(mainMod, "Certificate"),
-			// 	Fields: map[string]*tfbridge.SchemaInfo{
-			// 		"tags": {Type: makeType(mainPkg, "Tags")},
-			// 	},
-			// },
+		Resources: map[string]*tfbridge.ResourceInfo{
+			// https://github.com/sky-uk/terraform-provider-infoblox/blob/master/infoblox/provider.go
+			"infoblox_cname_record":          {Tok: makeResource(mainMod, "CNameRecord")},
+			"infoblox_arecord":               {Tok: makeResource(mainMod, "ARecord")},
+			"infoblox_srv_record":            {Tok: makeResource(mainMod, "SRVRecord")},
+			"infoblox_txtrecord":             {Tok: makeResource(mainMod, "TXTRecord")},
+			"infoblox_network":               {Tok: makeResource(mainMod, "Network")},
+			"infoblox_zone_auth":             {Tok: makeResource(mainMod, "ZoneAuth")},
+			"infoblox_dhcp_range":            {Tok: makeResource(mainMod, "DHCPRange")},
+			"infoblox_admin_user":            {Tok: makeResource(mainMod, "AdminUser")},
+			"infoblox_admin_group":           {Tok: makeResource(mainMod, "AdminGroup")},
+			"infoblox_admin_role":            {Tok: makeResource(mainMod, "AdminRole")},
+			"infoblox_ns_record":             {Tok: makeResource(mainMod, "NSRecord")},
+			"infoblox_zone_delegated":        {Tok: makeResource(mainMod, "ZoneDelegated")},
+			"infoblox_permission":            {Tok: makeResource(mainMod, "Permission")},
+			"infoblox_zone_stub":             {Tok: makeResource(mainMod, "ZoneStub")},
+			"infoblox_zone_forward":          {Tok: makeResource(mainMod, "ZoneForward")},
+			"infoblox_ns_group_delegation":   {Tok: makeResource(mainMod, "NSGroupDelegation")},
+			"infoblox_ns_group_forward":      {Tok: makeResource(mainMod, "NSGroupForward")},
+			"infoblox_ns_group_stub":         {Tok: makeResource(mainMod, "NSGroupStub")},
+			"infoblox_ns_group_forward_stub": {Tok: makeResource(mainMod, "NSGroupForwardStub")},
+			"infoblox_mx_record":             {Tok: makeResource(mainMod, "MXRecord")},
+			"infoblox_dns_view":              {Tok: makeResource(mainMod, "DNSView")},
 		},
 		DataSources: map[string]*tfbridge.DataSourceInfo{
 			// Map each resource in the Terraform provider to a Pulumi function. An example
@@ -140,7 +227,7 @@ func Provider() tfbridge.ProviderInfo {
 			// See the documentation for tfbridge.OverlayInfo for how to lay out this
 			// section, or refer to the AWS provider. Delete this section if there are
 			// no overlay files.
-			//Overlay: &tfbridge.OverlayInfo{},
+			// Overlay: &tfbridge.OverlayInfo{},
 		},
 		Python: &tfbridge.PythonInfo{
 			// List any Python dependencies and their version ranges
