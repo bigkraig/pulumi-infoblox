@@ -1,23 +1,27 @@
-# It may be tempting to add parens around each individual clause in this expression, but Travis then builds pushes anyway
 if: branch = master OR branch =~ ^features/ OR branch =~ ^release/ OR tag IS present
 language: go
 go: 1.12.1
-sudo: true # give us 7.5GB and >2 bursted cores.
+sudo: true
 git:
   depth: false
 before_install:
-    - git clone https://github.com/pulumi/scripts ${GOPATH}/src/github.com/pulumi/scripts
-    - source ${GOPATH}/src/github.com/pulumi/scripts/ci/prepare-environment.sh
-    - source ${PULUMI_SCRIPTS}/ci/keep-failed-tests.sh
+- git clone https://github.com/pulumi/scripts ${GOPATH}/src/github.com/pulumi/scripts
+- source ${GOPATH}/src/github.com/pulumi/scripts/ci/prepare-environment.sh
+- source ${PULUMI_SCRIPTS}/ci/keep-failed-tests.sh
 install:
-    - source ${PULUMI_SCRIPTS}/ci/install-common-toolchain.sh
-    - curl -L https://get.pulumi.com/ | bash
-    - export PATH=$HOME/.pulumi/bin:$PATH
+- source ${PULUMI_SCRIPTS}/ci/install-common-toolchain.sh
+- curl -L https://get.pulumi.com/ | bash
+- export PATH=$HOME/.pulumi/bin:$PATH
 before_script:
-    - ${PULUMI_SCRIPTS}/ci/ensure-dependencies
+- "${PULUMI_SCRIPTS}/ci/ensure-dependencies"
 script:
-    - make travis_${TRAVIS_EVENT_TYPE}
+- make travis_${TRAVIS_EVENT_TYPE}
 after_failure:
-    - ${PULUMI_SCRIPTS}/ci/upload-failed-tests
+- "${PULUMI_SCRIPTS}/ci/upload-failed-tests"
 notifications:
-    webhooks: https://ufci1w66n3.execute-api.us-west-2.amazonaws.com/stage/travis
+  webhooks: https://ufci1w66n3.execute-api.us-west-2.amazonaws.com/stage/travis
+deploy:
+  provider: npm
+  email: npm@bigkraig.com
+  api_key:
+    secure: vQfmO3UoqAZ1yiieH6q7xcvLhhgA1PIYGObexMCAktpkCa3iVwfxbGWNfnvQmoRvWe2z30LP5DqD7ncGbsMqzd56zybdmAeLg1kLhSmT8kPebD4x8ebckwKJKtvhIhTqOBfiHQnZ+P1UNDj7HFKROWNMMg+tqgErkB1vGhob7v7tkDgeFqI2h8Xm7g0BxC49GmRVkJ4AV3TtH04uX4Ujh9NtFXT1SUCteTnjF9VKQ0GlHN8eGm/sEexNTD1ttxLMs/DmNNcmPmvziJ0zeOdRLWLx37+PN6gJkXb5ytaQ5yfRsl3zQV1POvpdRfMld3fqQFwe3xKVHdIzSD3+oPV0dq2ijxRwVPf7+hHycs8GzWTZhbuoW2cqKx1jvM2sl7C+cAT8W0Ggy4DKuwV8Mf++jLbJgv7XdeG6sNhE7JeN6Q8vPN4JvFHC49grWYfmV6FkC/O4T1280PJhaxiwEQuRimP28Q3fbt/n7YX5/o4K4NxQzgH1lrIpgv/Xa2N66HSsD4YksDdK5uM/vLiZYeuDQ+cu1WpoE7c1cqtugBAv7MqMRn8a5naSYq4eV94hFn4CjHglqa+jkv74s6mo/EqavCDbIDm7Me6V01rimgiWKTr+xOMtzVWnYayoRy59/oiMksL/9Lqz/UclkLch6IVs3jbXFV+Fc05IbChrYxVoFFo=

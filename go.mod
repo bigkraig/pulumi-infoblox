@@ -1,4 +1,4 @@
-module github.com/pulumi/pulumi-infoblox
+module github.com/bigkraig/pulumi-infoblox
 
 go 1.12
 

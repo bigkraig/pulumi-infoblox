@@ -17,8 +17,8 @@ package main
 import (
 	"github.com/pulumi/pulumi-terraform/pkg/tfgen"
 
-	infoblox "github.com/pulumi/pulumi-infoblox"
-	"github.com/pulumi/pulumi-infoblox/pkg/version"
+	infoblox "github.com/bigkraig/pulumi-infoblox"
+	"github.com/bigkraig/pulumi-infoblox/pkg/version"
 )
 
 func main() {

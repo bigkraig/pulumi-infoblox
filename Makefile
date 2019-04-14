@@ -3,8 +3,8 @@ include build/common.mk
 
 PACK             := infoblox
 PACKDIR          := sdk
-PROJECT          := github.com/pulumi/pulumi-${PACK}
-NODE_MODULE_NAME := @pulumi/${PACK}
+PROJECT          := github.com/bigkraig/pulumi-${PACK}
+NODE_MODULE_NAME := bigkraig/${PACK}
 
 TFGEN           := pulumi-tfgen-${PACK}
 PROVIDER        := pulumi-resource-${PACK}
